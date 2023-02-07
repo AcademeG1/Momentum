@@ -31,7 +31,7 @@ function setLocalStorage() {
     const name = document.querySelector('.name');
     localStorage.setItem('name', name.value);
 }
-window.addEventListener('beforeunload', setLocalStorage)
+window.addEventListener('beforeunload', setLocalStorage);
 
 
 function getLocalStorage() {
@@ -40,4 +40,46 @@ function getLocalStorage() {
         name.value = localStorage.getItem('name');
     }
 }
-window.addEventListener('load', getLocalStorage)
+window.addEventListener('load', getLocalStorage);
+
+function getRandomNum() {
+    const num = String(Math.floor(Math.random() * (21 - 1) + 1));
+    return num.padStart(2, '0');
+}
+
+async function setBg(number) {
+    const timeOfDay = getTimeOfDay();
+    let bgNum = number;
+    // document.body.style.background = `url(https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${timeOfDay}/${bgNum}.jpg)`
+    let img = new Image();
+    img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${timeOfDay}/${bgNum}.jpg`;
+    img.onload = function() {
+        document.body.style.backgroundImage = 'url(' + img.src + ')';
+    };
+}
+
+let randomNum = getRandomNum();
+setBg(randomNum);
+
+document.querySelector('.slide-next').addEventListener('click', getSlideNext);
+document.querySelector('.slide-prev').addEventListener('click', getSlidePrev);
+
+function getSlideNext() {
+    if (randomNum === '20' || +randomNum + 1 === 21) {
+        randomNum = '01';
+    } else {
+        randomNum++;
+        randomNum = String(randomNum).padStart(2, '0')
+    }
+    setBg(randomNum);
+}
+
+function getSlidePrev() {
+    if (randomNum === '0' || +randomNum - 1 === 0) {
+        randomNum = '20';
+    } else {
+        randomNum--;
+        randomNum = String(randomNum).padStart(2, '0')
+    }
+    setBg(randomNum);
+}
