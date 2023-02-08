@@ -89,20 +89,54 @@ const temperature = document.querySelector('.temperature');
 const weatherDescription = document.querySelector('.weather-description');
 const city = document.querySelector('.city');
 
-city.addEventListener('change', () => {
+city.addEventListener('change', () => { // отслеживание события изменения города
     getWeather(`https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=ru&appid=08f2a575dda978b9c539199e54df03b0&units=metric`);
     // const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=ru&appid=08f2a575dda978b9c539199e54df03b0&units=metric`;
 })
 
-async function getWeather(url) {
+async function getWeather(url) { // асинхронная функция для получения погоды
     // const url = `https://api.openweathermap.org/data/2.5/weather?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&lang=ru&appid=a4d4f1ee98bf610a89f036359e940935&units=metric`;
     const res = await fetch(url)
     const data = await res.json();
-    console.log(data.weather[0].id, data.weather[0].description, data.main.temp)
-    weatherIcon.className = 'weather-icon owf';
-    weatherIcon.classList.add(`owf-${data.weather[0].id}`);
-    temperature.textContent = `${data.main.temp}°C`;
-    weatherDescription.textContent = data.weather[0].description;
+    // console.log(data.weather[0].id, data.weather[0].description, data.main.temp)
+    if (data.cod === 200) {
+        weatherIcon.className = 'weather-icon owf';
+        weatherIcon.classList.add(`owf-${data.weather[0].id}`);
+        temperature.textContent = `${Math.floor(data.main.temp)}°C`;
+        weatherDescription.textContent = data.weather[0].description;
+        document.querySelector('.weather-error').textContent = '';
+    } else {
+        weatherIcon.className = 'weather-icon owf';
+        temperature.textContent = ``;
+        weatherDescription.textContent = '';
+        document.querySelector('.weather-error').textContent = `${data.message}`;
+    }
+    
 }
 
 getWeather('https://api.openweathermap.org/data/2.5/weather?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&lang=ru&appid=a4d4f1ee98bf610a89f036359e940935&units=metric');
+
+const quote = document.querySelector('.quote');
+const author = document.querySelector('.author');
+
+async function getQuotes() { // генератор цитат
+    const fileRoute = './data.json';
+    const res = await fetch(fileRoute);
+    const data = await res.json();
+    console.log(data);
+    const randomQuotesNumber = Math.floor(Math.random()*data.length);
+    quote.textContent = `${data[randomQuotesNumber].text}`;
+    author.textContent = `${data[randomQuotesNumber].author}`;
+ }
+
+// или
+// function getQuotes() {
+//     const fileRoute = './data.json';
+//     fetch(fileRoute)
+//         .then(res => res.json())
+//         .then(
+//             (data) => console.log(data)
+//         );
+// }
+ getQuotes();
+ document.querySelector('.change-quote').addEventListener('click', getQuotes);
