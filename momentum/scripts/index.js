@@ -1,3 +1,5 @@
+import playList from "./playlist.js";
+
 function showTime() { // функция времени
     const date = new Date();
     document.querySelector('.time').textContent = date.toLocaleTimeString();
@@ -140,3 +142,88 @@ async function getQuotes() { // генератор цитат
 // }
  getQuotes();
  document.querySelector('.change-quote').addEventListener('click', getQuotes);
+
+ // плеер
+
+const audio = new Audio();
+let isPlay = false;
+let playNum = 0;
+const playBtn = document.querySelector('.play')
+const playPrev = document.querySelector('.play-prev');
+const playNext = document.querySelector('.play-next');
+const playListUl = document.querySelector('.play-list');
+// const playItem = document.querySelectorAll('.play-item');
+
+playList.forEach(item => {
+    const li = document.createElement('li');
+    li.className = 'play-item';
+    li.textContent = item.title;
+    playListUl.append(li);
+})
+
+function playOrPauseAudio() {
+    if (!isPlay) {
+        audio.src = playList[playNum].src;
+        audio.currentTime = 0;
+        audio.play();
+        isPlay = true;
+        console.log(playListUl)
+        showNowTrack();
+    } else {
+        audio.pause();
+        isPlay = false;
+    }
+}
+let saveTrack = document.body;
+function showNowTrack() {
+    saveTrack.classList.remove('item-active')
+    playListUl.childNodes.forEach(item => {
+        console.log(item)
+        if (playList[playNum].title == item.textContent) {
+            item.classList.add('item-active')
+            saveTrack = item;
+        }
+    })
+}
+
+function toggleBtn() {
+    playBtn.classList.toggle('pause');
+}
+playBtn.addEventListener('click', toggleBtn);
+
+function next() {
+    if (isPlay) {
+        playNum++;
+        playNum < playList.length ? playNum : playNum = 0;
+        audio.src = playList[playNum].src;
+        audio.play();
+    } else {
+        playNum++;
+        playNum < playList.length ? playNum : playNum = 0;
+    }
+    showNowTrack();
+}
+
+// let styles = window.getComputedStyle(playItem, ':before');
+// let content = styles['color'];
+// content = 'rgb(0, 0, 0)';
+// console.log(content)
+
+function prev() {
+    if (isPlay) {
+        playNum--;
+        playNum > 0 ? playNum : playNum = playList.length-1;
+        audio.src = playList[playNum].src;
+        audio.play();
+    } else {
+        playNum--;
+        playNum > 0? playNum : playNum = playList.length-1;
+    }
+    showNowTrack();
+}
+
+
+
+playBtn.addEventListener('click', playOrPauseAudio);
+playNext.addEventListener('click', next);
+playPrev.addEventListener('click', prev);
