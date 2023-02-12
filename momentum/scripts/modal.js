@@ -2,6 +2,10 @@
 const toggleIcon = document.querySelector('.toggle-icon');
 import { showDate, getWeather } from "./index.js";
 
+if (localStorage.getItem('lang' == null)) {
+    localStorage.setItem('lang', 'EN');
+} 
+
 const greetingTranslation = {
     en: {
         lang : 'en',
@@ -39,7 +43,11 @@ function renderModal() {
         titleLang.textContent = 'Lang version: ';
         const btnLang = document.createElement('button');
         btnLang.className = 'btnLang';
-        btnLang.textContent = 'EN';
+        if (localStorage.getItem('lang') == 'RU') {
+            btnLang.textContent = 'RU';
+        } else {
+            btnLang.textContent = 'EN';
+        }
         wrapLang.append(titleLang, btnLang);
 
         btnLang.addEventListener('click', () => {
@@ -47,7 +55,7 @@ function renderModal() {
                 btnLang.textContent = 'RU';
                 document.querySelector('.city').placeholder = 'Минск';
                 showDate('ru-Ru');
-                getWeather(`https://api.openweathermap.org/data/2.5/weather?q=Минск&lang=${'ru'}&appid=08f2a575dda978b9c539199e54df03b0&units=metric`)    
+                getWeather(`https://api.openweathermap.org/data/2.5/weather?q=Минск&lang=${'ru'}&appid=08f2a575dda978b9c539199e54df03b0&units=metric`, 'en')    
                 document.querySelector('.search').placeholder = 'Поиск';
                 document.querySelector('.searchButton').textContent = 'Найти';
                 localStorage.setItem('lang', 'RU');
@@ -57,7 +65,9 @@ function renderModal() {
                 btnLang.textContent = 'EN';
                 document.querySelector('.city').placeholder = 'Minsk';
                 showDate('en-En');
-                getWeather(`https://api.openweathermap.org/data/2.5/weather?q=Минск&lang=${'en'}&appid=08f2a575dda978b9c539199e54df03b0&units=metric`)     
+                // wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
+                // humidity.textContent = `Humidity: ${data.main.humidity}%`;
+                getWeather(`https://api.openweathermap.org/data/2.5/weather?q=Минск&lang=${'en'}&appid=08f2a575dda978b9c539199e54df03b0&units=metric`, 'ru')     
                 document.querySelector('.search').placeholder = 'Search';
                 document.querySelector('.searchButton').textContent = 'Search';
                 localStorage.setItem('lang', 'EN')
@@ -118,7 +128,51 @@ function renderModal() {
         titleBackground.className = 'titleBackground'
         titleBackground.textContent = 'Setting background';
 
-        cont.append(title, wrapLang, displaySetting, wrapDispPlayer, wrapDispWeather, wrapDispSearch, wrapDispQuots, titleBackground);
+        const wrapStyleBack = document.createElement('div');
+        wrapStyleBack.className = 'wrapStyleBack';
+
+        const divWrapSpanF = document.createElement('div');
+        divWrapSpanF.className = 'divWrapSpan';
+
+        const itemApiZero = document.createElement('input');
+        itemApiZero.name = 'itemApi';
+        itemApiZero.type = 'radio';
+        itemApiZero.id = 'idSecond';
+
+        const spanZero = document.createElement('span');
+        spanZero.textContent = 'Standart Image';
+
+        const divWrapSpanZ = document.createElement('div');
+        divWrapSpanZ.className = 'divWrapSpan';
+
+        divWrapSpanZ.append(spanZero, itemApiZero);
+
+        const itemApiFirst = document.createElement('input');
+        itemApiFirst.name = 'itemApi';
+        itemApiFirst.type = 'radio';
+        itemApiFirst.id = 'idFirst';
+
+        const spanFirst = document.createElement('span');
+        spanFirst.textContent = 'Unsplash API';
+
+        divWrapSpanF.append(spanFirst, itemApiFirst);
+
+        const itemApiSecond = document.createElement('input');
+        itemApiSecond.name = 'itemApi';
+        itemApiSecond.type = 'radio';
+        itemApiFirst.id = 'idSecond';
+
+        const spanSecond = document.createElement('span');
+        spanSecond.textContent = 'Flickr API';
+
+        const divWrapSpanS = document.createElement('div');
+        divWrapSpanS.className = 'divWrapSpan';
+
+        divWrapSpanS.append(spanSecond, itemApiSecond);
+
+        wrapStyleBack.append(divWrapSpanZ ,divWrapSpanF, divWrapSpanS);
+
+        cont.append(title, wrapLang, displaySetting, wrapDispPlayer, wrapDispWeather, wrapDispSearch, wrapDispQuots, titleBackground, wrapStyleBack);
         document.body.append(cont);
         const checki = document.querySelectorAll('.check');
         checki.forEach(item => {

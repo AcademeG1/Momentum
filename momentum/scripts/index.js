@@ -55,21 +55,29 @@ export function showDate(lang = 'ru-Ru') { // функция даты
     document.querySelector('.date').textContent = date.toLocaleDateString(lang, options);
 }
 
-showDate('en-En');
+if (LANG == 'RU') {
+    showDate('ru-Ru');
+    getWeather(`https://api.openweathermap.org/data/2.5/weather?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&lang=${'ru'}&appid=a4d4f1ee98bf610a89f036359e940935&units=metric`);
+    showGreeting();
+} else {
+    showDate('en-En');
+    getWeather(`https://api.openweathermap.org/data/2.5/weather?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&lang=${'en'}&appid=a4d4f1ee98bf610a89f036359e940935&units=metric`);
+    showGreeting();
+}
 
-function getTimeOfDay() { // функция врмени дня
+
+function getTimeOfDay(lang) { // функция врмени дня
     const date = new Date();
-    const timeCycle = ['morning', 'afternoon', 'evening', 'night'];
-    // const timeCycleRu = ['Доброе утро', 'Добрый день', 'Добрый вечер', 'Спокойной ночи'];
+    const timeCycle = greetingTranslation[LANG.toLowerCase()].timeDay;
     return timeCycle[Math.floor(date.getHours()/6)-1];
 }
 
 function showGreeting() { // вывод пожелания с функцией времени дня
-    const timeOfDay = getTimeOfDay();
-    document.querySelector('.greeting').textContent = `Good ${timeOfDay}`;
+    const timeOfDay = getTimeOfDay(LANG.toLowerCase());
+    document.querySelector('.greeting').textContent = `${timeOfDay}`;
 }
 
-showGreeting();
+
 
 function setLocalStorage() { // запись имени в локал
     const name = document.querySelector('.name');
@@ -94,9 +102,13 @@ function getRandomNum() { // функция рандома
 async function setBg(number) { // установка фона
     const timeOfDay = getTimeOfDay();
     let bgNum = number;
+    // const timeCycle = ['morning', 'afternoon', 'evening', 'night'];
     // document.body.style.background = `url(https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${timeOfDay}/${bgNum}.jpg)`
     let img = new Image();
-    img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${timeOfDay}/${bgNum}.jpg`;
+    const date = new Date();
+    const time = greetingTranslation.en.timeDay[Math.floor(date.getHours()/6)-1].split(' ')[1];
+    console.log(time)
+    img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${time}/${bgNum}.jpg`;
     img.onload = function() {
         document.body.style.backgroundImage = 'url(' + img.src + ')';
     };
@@ -137,21 +149,24 @@ const humidity = document.querySelector('.humidity');
 
 city.addEventListener('change', () => { // отслеживание события изменения города
     getWeather(`https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=${'en'}&appid=08f2a575dda978b9c539199e54df03b0&units=metric`);
-    // const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=ru&appid=08f2a575dda978b9c539199e54df03b0&units=metric`;
 })
 
-export async function getWeather(url) { // асинхронная функция для получения погоды
-    // const url = `https://api.openweathermap.org/data/2.5/weather?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&lang=ru&appid=a4d4f1ee98bf610a89f036359e940935&units=metric`;
+export async function getWeather(url, lan) { // асинхронная функция для получения погоды
     const res = await fetch(url)
     const data = await res.json();
-    // console.log(data.weather[0].id, data.weather[0].description, data.main.temp)
     if (data.cod === 200) {
         weatherIcon.className = 'weather-icon owf';
         weatherIcon.classList.add(`owf-${data.weather[0].id}`);
         temperature.textContent = `${Math.floor(data.main.temp)}°C`;
         weatherDescription.textContent = data.weather[0].description;
-        wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
-        humidity.textContent = `Humidity: ${data.main.humidity}%`;
+        if (lan == 'en') {
+            wind.textContent = `Скорость ветра: ${Math.floor(data.wind.speed)} m/s`;
+            humidity.textContent = `Влажность: ${data.main.humidity}%`;
+            
+        } else {
+            wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
+            humidity.textContent = `Humidity: ${data.main.humidity}%`;
+        }
         document.querySelector('.weather-error').textContent = '';
     } else {
         weatherIcon.className = 'weather-icon owf';
@@ -161,8 +176,6 @@ export async function getWeather(url) { // асинхронная функция
     }
     
 }
-
-getWeather(`https://api.openweathermap.org/data/2.5/weather?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&lang=${'en'}&appid=a4d4f1ee98bf610a89f036359e940935&units=metric`);
 
 const quote = document.querySelector('.quote');
 const author = document.querySelector('.author');

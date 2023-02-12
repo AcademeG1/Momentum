@@ -435,3 +435,13 @@ body {
 .disp {
   display: none;
 }
+
+.wrapStyleBack {
+  display: flex;
+  flex-direction: column;
+}
+
+.divWrapSpan {
+  display: flex;
+  justify-content: space-around;
+}
