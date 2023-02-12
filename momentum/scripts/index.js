@@ -1,14 +1,55 @@
 import playList from "./playlist.js";
 
+let LANG;
+let setting = []
+if (localStorage.getItem('setting') == null) {
+    setting = [true, true, true, true];
+} else {
+    setting = JSON.parse(localStorage.getItem('setting'));
+};
+
+if (!setting[0]) {
+    document.querySelector('.player').classList.toggle('disp')
+}
+if (!setting[1]) {
+    document.querySelector('.weather').classList.toggle('disp')
+}
+if (!setting[2]) {
+    document.querySelector('.searchPanel').classList.toggle('disp')
+}
+if (!setting[3]) {
+    document.querySelector('.footer').classList.toggle('disp')
+}
+
+if (localStorage.getItem('lang') == null) {
+    LANG = 'en';
+} else {
+    LANG = localStorage.getItem('lang');
+}
+
+const greetingTranslation = {
+    en: {
+        lang : 'en',
+        timeDay : ['Good morning', 'Good afternoon', 'Good evening', 'Good night']
+    },
+    ru: {
+        lang : 'ru',
+        timeDay : ['Доброе утро', 'Добрый день', 'Добрый вечер', 'Спокойной ночи']
+    }
+}
+let timer = setInterval(showTime, showDate, showGreeting, 1000);
+
+
 function showTime() { // функция времени
     const date = new Date();
     document.querySelector('.time').textContent = date.toLocaleTimeString();
-    setInterval(showTime, showDate, showGreeting, 1000);
+    clearInterval(timer);
+    timer = setInterval(showTime, showDate, showGreeting, 1000);
 }
 
 showTime();
 
-function showDate(lang = 'ru-Ru') { // функция даты
+export function showDate(lang = 'ru-Ru') { // функция даты
     const date = new Date();
     const options = {month: 'long', day: 'numeric', weekday: 'long'};
     document.querySelector('.date').textContent = date.toLocaleDateString(lang, options);
@@ -19,6 +60,7 @@ showDate('en-En');
 function getTimeOfDay() { // функция врмени дня
     const date = new Date();
     const timeCycle = ['morning', 'afternoon', 'evening', 'night'];
+    // const timeCycleRu = ['Доброе утро', 'Добрый день', 'Добрый вечер', 'Спокойной ночи'];
     return timeCycle[Math.floor(date.getHours()/6)-1];
 }
 
@@ -90,13 +132,15 @@ const weatherIcon = document.querySelector('.weather-icon');
 const temperature = document.querySelector('.temperature');
 const weatherDescription = document.querySelector('.weather-description');
 const city = document.querySelector('.city');
+const wind = document.querySelector('.wind');
+const humidity = document.querySelector('.humidity');
 
 city.addEventListener('change', () => { // отслеживание события изменения города
-    getWeather(`https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=ru&appid=08f2a575dda978b9c539199e54df03b0&units=metric`);
+    getWeather(`https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=${'en'}&appid=08f2a575dda978b9c539199e54df03b0&units=metric`);
     // const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=ru&appid=08f2a575dda978b9c539199e54df03b0&units=metric`;
 })
 
-async function getWeather(url) { // асинхронная функция для получения погоды
+export async function getWeather(url) { // асинхронная функция для получения погоды
     // const url = `https://api.openweathermap.org/data/2.5/weather?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&lang=ru&appid=a4d4f1ee98bf610a89f036359e940935&units=metric`;
     const res = await fetch(url)
     const data = await res.json();
@@ -106,6 +150,8 @@ async function getWeather(url) { // асинхронная функция для
         weatherIcon.classList.add(`owf-${data.weather[0].id}`);
         temperature.textContent = `${Math.floor(data.main.temp)}°C`;
         weatherDescription.textContent = data.weather[0].description;
+        wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
+        humidity.textContent = `Humidity: ${data.main.humidity}%`;
         document.querySelector('.weather-error').textContent = '';
     } else {
         weatherIcon.className = 'weather-icon owf';
@@ -116,7 +162,7 @@ async function getWeather(url) { // асинхронная функция для
     
 }
 
-getWeather('https://api.openweathermap.org/data/2.5/weather?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&lang=ru&appid=a4d4f1ee98bf610a89f036359e940935&units=metric');
+getWeather(`https://api.openweathermap.org/data/2.5/weather?q=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA&lang=${'en'}&appid=a4d4f1ee98bf610a89f036359e940935&units=metric`);
 
 const quote = document.querySelector('.quote');
 const author = document.querySelector('.author');
@@ -204,11 +250,6 @@ function next() {
     showNowTrack();
 }
 
-// let styles = window.getComputedStyle(playItem, ':before');
-// let content = styles['color'];
-// content = 'rgb(0, 0, 0)';
-// console.log(content)
-
 function prev() {
     if (isPlay) {
         playNum--;
@@ -227,3 +268,17 @@ function prev() {
 playBtn.addEventListener('click', playOrPauseAudio);
 playNext.addEventListener('click', next);
 playPrev.addEventListener('click', prev);
+
+// // const leng = document.querySelector('.lang');
+// const lengBtn = document.querySelector('.lang-btn')
+
+const search = document.querySelector('.search');
+const searchBtn = document.querySelector('.searchButton');
+
+if (search.value.length == 0) {
+    searchBtn.href = `https://yandex.by/search/`;
+}
+
+search.addEventListener('change', () => {
+    searchBtn.href = `https://yandex.by/search/?text=${search.value}`;
+})
