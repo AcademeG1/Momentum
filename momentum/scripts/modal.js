@@ -1,23 +1,11 @@
-// console.log('module')
 const toggleIcon = document.querySelector('.toggle-icon');
 import { showDate, getWeather } from "./index.js";
+import { greetingTranslation } from "./translete.js";
+import { setBg } from "./showBgMethod.js";
 
-if (localStorage.getItem('lang' == null)) {
-    localStorage.setItem('lang', 'EN');
-} 
-
-const greetingTranslation = {
-    en: {
-        lang : 'en',
-        timeDay : ['Good morning', 'Good afternoon', 'Good evening', 'Good night']
-    },
-    ru: {
-        lang : 'ru',
-        timeDay : ['Доброе утро', 'Добрый день', 'Добрый вечер', 'Спокойной ночи']
-    }
-}
 
 toggleIcon.addEventListener('click', renderModal)
+
 let setting = [true, true, true, true];
 function renderModal() {
     if (localStorage.setting == undefined) {
@@ -65,8 +53,6 @@ function renderModal() {
                 btnLang.textContent = 'EN';
                 document.querySelector('.city').placeholder = 'Minsk';
                 showDate('en-En');
-                // wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
-                // humidity.textContent = `Humidity: ${data.main.humidity}%`;
                 getWeather(`https://api.openweathermap.org/data/2.5/weather?q=Минск&lang=${'en'}&appid=08f2a575dda978b9c539199e54df03b0&units=metric`, 'ru')     
                 document.querySelector('.search').placeholder = 'Search';
                 document.querySelector('.searchButton').textContent = 'Search';
@@ -134,13 +120,24 @@ function renderModal() {
         const divWrapSpanF = document.createElement('div');
         divWrapSpanF.className = 'divWrapSpan';
 
+        function getRandomNum() { // функция рандома
+            const num = String(Math.floor(Math.random() * (21 - 1) + 1));
+            return num.padStart(2, '0');
+        }
+
         const itemApiZero = document.createElement('input');
         itemApiZero.name = 'itemApi';
         itemApiZero.type = 'radio';
         itemApiZero.id = 'idSecond';
+        // itemApiZero.checked = true;
+        itemApiZero.className = 'checkRadio';
+        itemApiZero.addEventListener('click', () => {
+            setBg(getRandomNum(),'standart')
+            localStorage.setItem('bgSelector', JSON.stringify('standart'));
+        })
 
         const spanZero = document.createElement('span');
-        spanZero.textContent = 'Standart Image';
+        spanZero.textContent = 'Standart Image RS';
 
         const divWrapSpanZ = document.createElement('div');
         divWrapSpanZ.className = 'divWrapSpan';
@@ -151,6 +148,12 @@ function renderModal() {
         itemApiFirst.name = 'itemApi';
         itemApiFirst.type = 'radio';
         itemApiFirst.id = 'idFirst';
+        itemApiFirst.className = 'checkRadio';
+        itemApiFirst.addEventListener('change', () => {
+            // console.log(itemApiFirst)
+            setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${'nature'}&client_id=E8BRW2u_6WvCYHyNChd4OEa4g-l34ihoPPw_3lazJ10`, 'unsplash')
+            localStorage.setItem('bgSelector', JSON.stringify('unsplash'))
+        })
 
         const spanFirst = document.createElement('span');
         spanFirst.textContent = 'Unsplash API';
@@ -161,6 +164,11 @@ function renderModal() {
         itemApiSecond.name = 'itemApi';
         itemApiSecond.type = 'radio';
         itemApiFirst.id = 'idSecond';
+        itemApiSecond.className = 'checkRadio';
+        itemApiSecond.addEventListener('change', () => {
+            setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${'car'}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
+            localStorage.setItem('bgSelector', JSON.stringify('flickr'));
+        })
 
         const spanSecond = document.createElement('span');
         spanSecond.textContent = 'Flickr API';
@@ -172,16 +180,31 @@ function renderModal() {
 
         wrapStyleBack.append(divWrapSpanZ ,divWrapSpanF, divWrapSpanS);
 
+        if (JSON.parse(localStorage.getItem('bgSelector')) == 'standart') {
+            itemApiZero.checked = true;
+            itemApiFirst.checked = false;
+            itemApiSecond.checked = false;
+        }
+
+        if (JSON.parse(localStorage.getItem('bgSelector')) == 'unsplash') {
+            itemApiZero.checked = false;
+            itemApiFirst.checked = true;
+            itemApiSecond.checked = false;
+        }
+
+        if (JSON.parse(localStorage.getItem('bgSelector')) == 'flickr') {
+            itemApiZero.checked = false;
+            itemApiFirst.checked = false;
+            itemApiSecond.checked = true;
+        }
+
         cont.append(title, wrapLang, displaySetting, wrapDispPlayer, wrapDispWeather, wrapDispSearch, wrapDispQuots, titleBackground, wrapStyleBack);
         document.body.append(cont);
         const checki = document.querySelectorAll('.check');
         checki.forEach(item => {
-            console.log(item)
             item.addEventListener('input', () => {
                 setting[item.id] = item.checked;
-                console.log(setting)
                 localStorage.setItem('setting', JSON.stringify(setting))
-                // console.log('chacnge', item)
                 if (item.id == '0') {
                     document.querySelector('.player').classList.toggle('disp');
                 }
@@ -197,4 +220,29 @@ function renderModal() {
             })
         })
     }
+    // document.querySelectorAll('.checkRadio').forEach(item => {
+    //     console.log(item)
+    //     item.addEventListener('click', () => {
+    //         console.log(item)
+    //     })
+    // })
 }
+
+
+
+export async function getLinkToImage(url) {
+    const inf = await fetch(url);
+    const data = await inf.json();
+    console.log(data.urls.regular)
+    let img = new Image();
+    img.src = `${data.urls.regular}`;
+    img.onload = function() {
+        document.body.style.backgroundImage = 'url(' + img.src + ')';
+    };
+}
+// https://api.unsplash.com/photos/random?orientation=landscape&query=nature&client_id=bOMyUtcGB20DmVVAJIHDRCFr34u_UQumcXVa0lpXpQM
+// getLinkToImage('https://api.unsplash.com/photos/random?orientation=landscape&query=nature&client_id=bOMyUtcGB20DmVVAJIHDRCFr34u_UQumcXVa0lpXpQM');
+// getLinkToImage('https://api.unsplash.com/photos/random?orientation=landscape&query=nature&client_id=E8BRW2u_6WvCYHyNChd4OEa4g-l34ihoPPw_3lazJ10');
+// E8BRW2u_6WvCYHyNChd4OEa4g-l34ihoPPw_3lazJ10
+
+// https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=car&extras=url_l&format=json&nojsoncallback=1

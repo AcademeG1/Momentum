@@ -21,6 +21,7 @@ body {
   background-blend-mode: multiply;
   transition: background-image 1s ease-in-out;
   position: relative;
+  background-size: cover;
 }
 
 .header {

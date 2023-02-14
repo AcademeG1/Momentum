@@ -1,24 +1,29 @@
 import playList from "./playlist.js";
-
+import { greetingTranslation } from "./translete.js";
+import { setBg } from "./showBgMethod.js";
+import { getLinkToImage } from "./modal.js";
 let LANG;
-let setting = []
+let setting = [];
 if (localStorage.getItem('setting') == null) {
     setting = [true, true, true, true];
 } else {
     setting = JSON.parse(localStorage.getItem('setting'));
 };
 
+// if (localStorage.getItem('lang' == null)) {
+//     localStorage.setItem('lang', 'EN');
+// } 
 if (!setting[0]) {
-    document.querySelector('.player').classList.toggle('disp')
+    document.querySelector('.player').classList.toggle('disp');
 }
 if (!setting[1]) {
-    document.querySelector('.weather').classList.toggle('disp')
+    document.querySelector('.weather').classList.toggle('disp');
 }
 if (!setting[2]) {
-    document.querySelector('.searchPanel').classList.toggle('disp')
+    document.querySelector('.searchPanel').classList.toggle('disp');
 }
 if (!setting[3]) {
-    document.querySelector('.footer').classList.toggle('disp')
+    document.querySelector('.footer').classList.toggle('disp');
 }
 
 if (localStorage.getItem('lang') == null) {
@@ -27,16 +32,6 @@ if (localStorage.getItem('lang') == null) {
     LANG = localStorage.getItem('lang');
 }
 
-const greetingTranslation = {
-    en: {
-        lang : 'en',
-        timeDay : ['Good morning', 'Good afternoon', 'Good evening', 'Good night']
-    },
-    ru: {
-        lang : 'ru',
-        timeDay : ['Доброе утро', 'Добрый день', 'Добрый вечер', 'Спокойной ночи']
-    }
-}
 let timer = setInterval(showTime, showDate, showGreeting, 1000);
 
 
@@ -99,45 +94,52 @@ function getRandomNum() { // функция рандома
     return num.padStart(2, '0');
 }
 
-async function setBg(number) { // установка фона
-    const timeOfDay = getTimeOfDay();
-    let bgNum = number;
-    // const timeCycle = ['morning', 'afternoon', 'evening', 'night'];
-    // document.body.style.background = `url(https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${timeOfDay}/${bgNum}.jpg)`
-    let img = new Image();
-    const date = new Date();
-    const time = greetingTranslation.en.timeDay[Math.floor(date.getHours()/6)-1].split(' ')[1];
-    console.log(time)
-    img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${time}/${bgNum}.jpg`;
-    img.onload = function() {
-        document.body.style.backgroundImage = 'url(' + img.src + ')';
-    };
-}
+// вынес отсюда
 
 let randomNum = getRandomNum(); // получения числа от 1 до 20
-setBg(randomNum); // и устновка фона
+setBg(randomNum, 'standart'); // и устновка фона
 
 document.querySelector('.slide-next').addEventListener('click', getSlideNext); // кнопка вперед
 document.querySelector('.slide-prev').addEventListener('click', getSlidePrev); // кнопка назад
 
-function getSlideNext() { // кнопка вперед, обработка
-    if (randomNum === '20' || +randomNum + 1 === 21) {
-        randomNum = '01';
-    } else {
-        randomNum++;
-        randomNum = String(randomNum).padStart(2, '0')
+function getSlideNext() { // кнопка вперед слайдера, обработка
+    const settingBg = JSON.parse(localStorage.getItem('bgSelector'));
+    console.log(settingBg)
+    if (settingBg == 'standart') {
+        if (randomNum === '20' || +randomNum + 1 === 21) {
+            randomNum = '01';
+        } else {
+            randomNum++;
+            randomNum = String(randomNum).padStart(2, '0')
+        }
+        setBg(randomNum, 'standart');
     }
-    setBg(randomNum);
+    if (settingBg == 'unsplash') {
+        setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${'nature'}&client_id=E8BRW2u_6WvCYHyNChd4OEa4g-l34ihoPPw_3lazJ10`, 'unsplash');
+    }
+    if (settingBg == 'flickr') {
+        setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${'car'}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
+    }
 }
 
-function getSlidePrev() { // кнопка назад обработка
-    if (randomNum === '0' || +randomNum - 1 === 0) {
-        randomNum = '20';
-    } else {
-        randomNum--;
-        randomNum = String(randomNum).padStart(2, '0')
+function getSlidePrev() { // кнопка назад слайдера обработка
+    const settingBg = JSON.parse(localStorage.getItem('bgSelector'));
+    console.log(settingBg)
+    if (settingBg == 'standart') {
+        if (randomNum === '0' || +randomNum - 1 === 0) {
+            randomNum = '20';
+        } else {
+            randomNum--;
+            randomNum = String(randomNum).padStart(2, '0')
+        }
+        setBg(randomNum, 'standart');
     }
-    setBg(randomNum);
+    if (settingBg == 'unsplash') {
+        setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${'nature'}&client_id=E8BRW2u_6WvCYHyNChd4OEa4g-l34ihoPPw_3lazJ10`, 'unsplash');
+    }
+    if (settingBg == 'flickr') {
+        setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${'car'}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
+    }
 }
 
 const weatherIcon = document.querySelector('.weather-icon');
@@ -162,7 +164,6 @@ export async function getWeather(url, lan) { // асинхронная функ�
         if (lan == 'en') {
             wind.textContent = `Скорость ветра: ${Math.floor(data.wind.speed)} m/s`;
             humidity.textContent = `Влажность: ${data.main.humidity}%`;
-            
         } else {
             wind.textContent = `Wind speed: ${Math.floor(data.wind.speed)} m/s`;
             humidity.textContent = `Humidity: ${data.main.humidity}%`;
@@ -184,7 +185,6 @@ async function getQuotes() { // генератор цитат
     const fileRoute = './data.json';
     const res = await fetch(fileRoute);
     const data = await res.json();
-    console.log(data);
     const randomQuotesNumber = Math.floor(Math.random()*data.length);
     quote.textContent = `${data[randomQuotesNumber].text}`;
     author.textContent = `${data[randomQuotesNumber].author}`;
@@ -211,7 +211,6 @@ const playBtn = document.querySelector('.play')
 const playPrev = document.querySelector('.play-prev');
 const playNext = document.querySelector('.play-next');
 const playListUl = document.querySelector('.play-list');
-// const playItem = document.querySelectorAll('.play-item');
 
 playList.forEach(item => {
     const li = document.createElement('li');
@@ -226,7 +225,6 @@ function playOrPauseAudio() {
         audio.currentTime = 0;
         audio.play();
         isPlay = true;
-        console.log(playListUl)
         showNowTrack();
     } else {
         audio.pause();
@@ -237,7 +235,6 @@ let saveTrack = document.body;
 function showNowTrack() {
     saveTrack.classList.remove('item-active')
     playListUl.childNodes.forEach(item => {
-        console.log(item)
         if (playList[playNum].title == item.textContent) {
             item.classList.add('item-active')
             saveTrack = item;
@@ -281,9 +278,6 @@ function prev() {
 playBtn.addEventListener('click', playOrPauseAudio);
 playNext.addEventListener('click', next);
 playPrev.addEventListener('click', prev);
-
-// // const leng = document.querySelector('.lang');
-// const lengBtn = document.querySelector('.lang-btn')
 
 const search = document.querySelector('.search');
 const searchBtn = document.querySelector('.searchButton');
