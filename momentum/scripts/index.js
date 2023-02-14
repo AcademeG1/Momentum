@@ -1,7 +1,7 @@
 import playList from "./playlist.js";
 import { greetingTranslation } from "./translete.js";
 import { setBg } from "./showBgMethod.js";
-import { getLinkToImage } from "./modal.js";
+
 let LANG;
 let setting = [];
 if (localStorage.getItem('setting') == null) {
@@ -10,9 +10,6 @@ if (localStorage.getItem('setting') == null) {
     setting = JSON.parse(localStorage.getItem('setting'));
 };
 
-// if (localStorage.getItem('lang' == null)) {
-//     localStorage.setItem('lang', 'EN');
-// } 
 if (!setting[0]) {
     document.querySelector('.player').classList.toggle('disp');
 }
@@ -34,6 +31,9 @@ if (localStorage.getItem('lang') == null) {
 
 let timer = setInterval(showTime, showDate, showGreeting, 1000);
 
+if (localStorage.getItem('bgSelector') === null) {
+    localStorage.setItem('bgSelector', JSON.stringify('standart'));
+} 
 
 function showTime() { // функция времени
     const date = new Date();
@@ -97,7 +97,16 @@ function getRandomNum() { // функция рандома
 // вынес отсюда
 
 let randomNum = getRandomNum(); // получения числа от 1 до 20
-setBg(randomNum, 'standart'); // и устновка фона
+if (JSON.parse(localStorage.getItem('bgSelector')) == 'standart') {
+    setBg(randomNum, 'standart'); // и устновка фона
+} else 
+if (JSON.parse(localStorage.getItem('bgSelector')) == 'unsplash') {
+    setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${'nature'}&client_id=E8BRW2u_6WvCYHyNChd4OEa4g-l34ihoPPw_3lazJ10`, 'unsplash')
+} else 
+if (JSON.parse(localStorage.getItem('bgSelector')) == 'flickr') {
+    setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${'car'}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
+}
+
 
 document.querySelector('.slide-next').addEventListener('click', getSlideNext); // кнопка вперед
 document.querySelector('.slide-prev').addEventListener('click', getSlidePrev); // кнопка назад
