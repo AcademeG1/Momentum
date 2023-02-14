@@ -220,12 +220,6 @@ function renderModal() {
             })
         })
     }
-    // document.querySelectorAll('.checkRadio').forEach(item => {
-    //     console.log(item)
-    //     item.addEventListener('click', () => {
-    //         console.log(item)
-    //     })
-    // })
 }
 
 
