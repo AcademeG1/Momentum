@@ -27,9 +27,8 @@ export async function setBg(number, flag) { // установка фона
     if (flag == 'flickr') {
         const inf = await fetch(number);
         const data = await inf.json();
-        console.log(data.photos.photo[Math.floor(Math.random()*data.photos.photo.length)].url_l)
         let img = new Image();
-        img.src = `${data.photos.photo[Math.floor(Math.random()*data.photos.photo.length)].url_l}`;
+        img.src = `${await data.photos.photo[Math.floor(Math.random()*data.photos.photo.length)].url_l}`;
         img.onload = function() {
             document.body.style.backgroundImage = 'url(' + img.src + ')';
         };

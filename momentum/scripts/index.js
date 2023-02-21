@@ -64,16 +64,16 @@ if (LANG == 'RU') {
 function getTimeOfDay(lang) { // функция врмени дня
     const date = new Date();
     const timeCycle = greetingTranslation[LANG.toLowerCase()].timeDay;
-    if (date.getHours() > 4 && date.getHours() < 10) {
-        return timeCycle[0];
-    } else if (date.getHours() > 10 && date.getHours() < 16) {
-        return timeCycle[1];
-    } else if (date.getHours() > 16 && date.getHours() < 22) {
-        return timeCycle[2];
-    } else {
-        return timeCycle[3];
-    }
-    // return timeCycle[Math.floor(date.getHours()/6)-1];
+    // if (date.getHours() > 4 && date.getHours() < 10) {
+    //     return timeCycle[0];
+    // } else if (date.getHours() > 10 && date.getHours() < 16) {
+    //     return timeCycle[1];
+    // } else if (date.getHours() > 16 && date.getHours() < 22) {
+    //     return timeCycle[2];
+    // } else {
+    //     return timeCycle[3];
+    // }
+    return timeCycle[Math.floor(date.getHours()/6)-1];
 }
 
 function showGreeting() { // вывод пожелания с функцией времени дня
@@ -140,7 +140,12 @@ function getSlideNext() { // кнопка вперед слайдера, обр�
         }
     }
     if (settingBg == 'flickr') {
-        setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${'car'}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
+        if (localStorage.getItem('flickrImage') !== null) {
+            setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${JSON.parse(localStorage.getItem('flickrImage'))}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
+        } else {
+            setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${'nature'}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
+        }
+        // setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${'car'}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
     }
 }
 
