@@ -149,16 +149,29 @@ function renderModal() {
         itemApiFirst.type = 'radio';
         itemApiFirst.id = 'idFirst';
         itemApiFirst.className = 'checkRadio';
+
+        const itemApiTextInput = document.createElement('input');
+        itemApiTextInput.type = 'text';
+        itemApiTextInput.className = 'itemApiTextInput';
+        itemApiTextInput.placeholder = 'nature';
+        itemApiTextInput.addEventListener('blur', () => {
+            setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${itemApiTextInput.value}&client_id=bOMyUtcGB20DmVVAJIHDRCFr34u_UQumcXVa0lpXpQM`, 'unsplash')
+            localStorage.setItem('unsImage', JSON.stringify(`${itemApiTextInput.value}`));
+        })
         itemApiFirst.addEventListener('change', () => {
             // console.log(itemApiFirst)
-            setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${'nature'}&client_id=E8BRW2u_6WvCYHyNChd4OEa4g-l34ihoPPw_3lazJ10`, 'unsplash')
+            if (itemApiTextInput.value === '') {
+                setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${'nature'}&client_id=bOMyUtcGB20DmVVAJIHDRCFr34u_UQumcXVa0lpXpQM`, 'unsplash')
+            } else {
+                setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${itemApiTextInput.value}&client_id=bOMyUtcGB20DmVVAJIHDRCFr34u_UQumcXVa0lpXpQM`, 'unsplash')
+            }
             localStorage.setItem('bgSelector', JSON.stringify('unsplash'))
         })
 
         const spanFirst = document.createElement('span');
         spanFirst.textContent = 'Unsplash API';
 
-        divWrapSpanF.append(spanFirst, itemApiFirst);
+        divWrapSpanF.append(spanFirst, itemApiTextInput, itemApiFirst);
 
         const itemApiSecond = document.createElement('input');
         itemApiSecond.name = 'itemApi';
@@ -166,17 +179,30 @@ function renderModal() {
         itemApiFirst.id = 'idSecond';
         itemApiSecond.className = 'checkRadio';
         itemApiSecond.addEventListener('change', () => {
-            setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${'car'}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
+            if (itemApiTextInput.value === '') {
+                setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${'nature'}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
+            } else {
+                setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${itemApiTextInput.value}&extras=url_l&format=json&nojsoncallback=1`, 'flickr')
+            }
             localStorage.setItem('bgSelector', JSON.stringify('flickr'));
         })
 
         const spanSecond = document.createElement('span');
         spanSecond.textContent = 'Flickr API';
 
+        const itemApiTextIn = document.createElement('input');
+        itemApiTextIn.type = 'text';
+        itemApiTextIn.className = 'itemApiTextIn';
+        itemApiTextIn.placeholder = 'nature';
+        itemApiTextIn.addEventListener('blur', () => {
+            setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${itemApiTextIn.value}&client_id=bOMyUtcGB20DmVVAJIHDRCFr34u_UQumcXVa0lpXpQM`, 'flickr')
+            localStorage.setItem('flickrImage', JSON.stringify(`${itemApiTextIn.value}`));
+        })
+
         const divWrapSpanS = document.createElement('div');
         divWrapSpanS.className = 'divWrapSpan';
 
-        divWrapSpanS.append(spanSecond, itemApiSecond);
+        divWrapSpanS.append(spanSecond, itemApiTextIn, itemApiSecond);
 
         wrapStyleBack.append(divWrapSpanZ ,divWrapSpanF, divWrapSpanS);
 

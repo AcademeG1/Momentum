@@ -20,7 +20,6 @@ todoBtn.addEventListener('click', () => {
         todoInput.placeholder = 'New Todo'
         todoInput.addEventListener('keydown', (e) => {
             if (e.keyCode === 13) {
-                // console.log(todoInput.value)
 
                 const li = document.createElement('li');
                 li.className = 'li-task'

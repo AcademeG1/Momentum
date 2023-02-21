@@ -64,7 +64,16 @@ if (LANG == 'RU') {
 function getTimeOfDay(lang) { // функция врмени дня
     const date = new Date();
     const timeCycle = greetingTranslation[LANG.toLowerCase()].timeDay;
-    return timeCycle[Math.floor(date.getHours()/6)-1];
+    if (date.getHours() > 4 && date.getHours() < 10) {
+        return timeCycle[0];
+    } else if (date.getHours() > 10 && date.getHours() < 16) {
+        return timeCycle[1];
+    } else if (date.getHours() > 16 && date.getHours() < 22) {
+        return timeCycle[2];
+    } else {
+        return timeCycle[3];
+    }
+    // return timeCycle[Math.floor(date.getHours()/6)-1];
 }
 
 function showGreeting() { // вывод пожелания с функцией времени дня
@@ -124,7 +133,11 @@ function getSlideNext() { // кнопка вперед слайдера, обр�
         setBg(randomNum, 'standart');
     }
     if (settingBg == 'unsplash') {
-        setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${'nature'}&client_id=E8BRW2u_6WvCYHyNChd4OEa4g-l34ihoPPw_3lazJ10`, 'unsplash');
+        if (localStorage.getItem('unsImage') !== null) {
+            setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${JSON.parse(localStorage.getItem('unsImage'))}&client_id=bOMyUtcGB20DmVVAJIHDRCFr34u_UQumcXVa0lpXpQM`, 'unsplash'); 
+        } else {
+            setBg(`https://api.unsplash.com/photos/random?orientation=landscape&query=${'nature'}&client_id=bOMyUtcGB20DmVVAJIHDRCFr34u_UQumcXVa0lpXpQM`, 'unsplash');
+        }
     }
     if (settingBg == 'flickr') {
         setBg(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9c32d83e0a8290889207fb2cd9dfcd6b&tags=${'car'}&extras=url_l&format=json&nojsoncallback=1`, 'flickr');
