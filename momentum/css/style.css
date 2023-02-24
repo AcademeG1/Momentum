@@ -492,3 +492,43 @@ body {
 .todoMenu {
   font-size: 17px;
 }
+
+.play-volume {
+  width: 40px;
+  height: 40px;
+  background-size: 40px 40px;
+}
+
+.audio-range-value {
+  border-radius: 10px;
+  width: 85%;
+  height: 3px;
+  background-color: #dddddd;
+  margin-top: -20px;
+  margin-bottom: 0;
+}
+
+.audio-time {
+  width: 0px;
+  height: 3px;
+  background-color: #474747;
+}
+
+.audio-track__timers {
+  width: 85%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.sound-range {
+  width: 30px;  
+  height: 30px;
+}
+
+.wrapper-volume {
+  display: flex;
+}
+
+.input-volume {
+  width: 65%;
+}

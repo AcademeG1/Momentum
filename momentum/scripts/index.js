@@ -238,6 +238,10 @@ const playBtn = document.querySelector('.play')
 const playPrev = document.querySelector('.play-prev');
 const playNext = document.querySelector('.play-next');
 const playListUl = document.querySelector('.play-list');
+const audioTime = document.querySelector('.audio-time');
+const inputVolume = document.querySelector('.input-volume');
+const timeNow = document.querySelector('.time_now');
+const timeEnd = document.querySelector('.time_end');
 
 playList.forEach(item => {
     const li = document.createElement('li');
@@ -245,16 +249,30 @@ playList.forEach(item => {
     li.textContent = item.title;
     playListUl.append(li);
 })
-
+let audioPlay
 function playOrPauseAudio() {
     if (!isPlay) {
         audio.src = playList[playNum].src;
+        audio.onloadeddata = () => { timeEnd.textContent = Math.round(audio.duration) < 60 ? `00:${Math.round(audio.duration)}` : `${new Date(Math.round(audio.duration) *  1000).toISOString().substr(14, 5)}`}
         audio.currentTime = 0;
         audio.play();
         isPlay = true;
+        // audioTime.style.width = 0;
+        audioPlay = setInterval(() => {
+            audioTime.style.width = (Math.round(audio.currentTime * 100)) / Math.round(audio.duration) + '%';
+            timeNow.textContent = `${new Date(Math.round(audio.currentTime) *  1000).toISOString().substr(14, 5)}`;
+            if (Math.round(audio.currentTime) == Math.round(audio.duration)) {
+                isPlay = true;
+                clearInterval(audioPlay);
+                toggleBtn();
+                // playOrPauseAudio()
+            }
+        }, 10);
         showNowTrack();
+        ;
     } else {
         audio.pause();
+        clearInterval(audioPlay);
         isPlay = false;
     }
 }
@@ -268,6 +286,11 @@ function showNowTrack() {
         }
     })
 }
+
+inputVolume.addEventListener('input', (event) => {
+    console.log(event.target.value)
+    audio.volume = event.target.value;
+})
 
 function toggleBtn() {
     playBtn.classList.toggle('pause');
