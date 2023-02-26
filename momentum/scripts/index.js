@@ -253,7 +253,8 @@ let audioPlay
 function playOrPauseAudio() {
     if (!isPlay) {
         audio.src = playList[playNum].src;
-        audio.onloadeddata = () => { timeEnd.textContent = Math.round(audio.duration) < 60 ? `00:${Math.round(audio.duration)}` : `${new Date(Math.round(audio.duration) *  1000).toISOString().substr(14, 5)}`}
+        audio.onloadeddata = () => { timeEnd.textContent = Math.round(audio.duration) < 60 ? `00:${Math.round(audio.duration)}` 
+        : `${new Date(Math.round(audio.duration) *  1000).toISOString().substr(14, 5)}`}
         audio.currentTime = 0;
         audio.play();
         isPlay = true;
@@ -265,7 +266,6 @@ function playOrPauseAudio() {
                 isPlay = true;
                 clearInterval(audioPlay);
                 toggleBtn();
-                // playOrPauseAudio()
             }
         }, 10);
         showNowTrack();
