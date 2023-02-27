@@ -7,7 +7,7 @@ export async function setBg(number, flag) { // установка фона
         let bgNum = number;
         const date = new Date();
         let img = new Image();
-        const time = greetingTranslation.en.timeDay[Math.floor(date.getHours()/6)].split(' ')[1];
+        const time = greetingTranslation.en.timeDay[Math.floor(date.getHours()/6 < 0 ? 0 : (Math.floor(date.getHours()/6 - 1) ))].split(' ')[1];
         img.src = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${time}/${bgNum}.jpg`;
         img.onload = function() {
             document.body.style.backgroundImage = 'url(' + img.src + ')';
